@@ -1,5 +1,7 @@
 # Connecting Nifi to Teradata
 
+![](./nifi-td.png)
+
 For this demo I will be using a Windows PC including:
 
 - Docker desktop
@@ -11,7 +13,7 @@ For this demo I will be using a Windows PC including:
 
 The easiest way I found to get an instance of Nifi running is using Docker.
 
-To get Docker working on Windows there is a little bit of extra setup required.
+To get Docker working on Windows there is a little bit of extra setup required. Firstly install Docker desktop using the following installation.
 
 [https://docs.docker.com/desktop/install/windows-install/](https://docs.docker.com/desktop/install/windows-install/)
 
@@ -21,13 +23,15 @@ Also, getting WSL2 setup is required for better performance.
 
 [https://hub.docker.com/r/apache/nifi](https://hub.docker.com/r/apache/nifi)
 
-Pull the image.
+In your PowerShell terminal, pull the image.
 
 ```ps1
 docker pull apache/nifi
 ```
 
-Run the image (as a container).
+To run the Docker image (as a container), use the follow command, or run using the Docker desktop application.
+
+![](./img/nifitd-docker-container.png)
 
 ```ps1
 docker run --name nifi -p 8443:8443 -d apache/nifi:latest
@@ -46,6 +50,10 @@ Generated Password [<password>]
 
 Browse to the service in your browser of choice and login with the Generated credentials.
 
+[https://localhost:8443/nifi/](https://localhost:8443/nifi/)
+
+![](./img/nifitd-login.png)
+
 ## Setting up Teradata VM
 
 This is something for another time, and if you are reading this you probably have a large enterprise Teradata instance you want to connect to.
@@ -57,6 +65,14 @@ For this demo, the important thing is the IP address of the VM is _192.168.190.1
 ## Adding the Teradata JDBC driver to the Docker container
 
 We need to copy the Teradata JDBC driver to the Docker container and then restart it. Firstly download the JDBC driver and change to the directory in PowerShell.
+
+You'll need to sign up/login to download the driver and then extract it from the Zip archive.
+
+[https://downloads.teradata.com/download/connectivity/jdbc-driver](https://downloads.teradata.com/download/connectivity/jdbc-driver)
+
+![](./img/nifitd-teradata-jdbc-driver-download.png)
+
+![](./img/nifitd-teradata-jdbc-driver-jar.png)
 
 Then list the containers running.
 
@@ -71,7 +87,7 @@ CONTAINER ID IMAGE              PORTS                  NAMES
 81b55e074d9a apache/nifi:latest 0.0.0.0:8443->8443/tcp nifi
 ```
 
-Replace the **CONTAINER ID**in the following command to copy the driver from your local Windows host to the Docker container.
+Replace the **CONTAINER ID** in the following command to copy the driver from your local Windows host to the Docker container.
 
 ```ps1
 docker cp .\terajdbc4.jar 81b55e074d9a:/opt/nifi/nifi-current/lib
